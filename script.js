@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Pré-carrega o áudio
-    const beijo = new Audio("Som_de_beijo_-_Blob_Sound__128k_.mp3");
+    const beijo = new Audio("beijo.mp3");
     beijo.preload = "auto";
 
     // ✅ Notificação Telegram
@@ -45,8 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 beijo.pause();
                 beijo.currentTime = 0;
-            }, 1000);
-        }, 1500);
+            }, 900);
+        }, 3000);
 
         // Começa animação de saída
         setTimeout(() => {
