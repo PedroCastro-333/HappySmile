@@ -1,62 +1,33 @@
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("JS carregado ✅");
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    const botao = document.getElementById("botao");
-    const gatinho = document.getElementById("gatinho");
-    const final = document.getElementById("final");
+<head>
+    <meta charset="UTF-8">
+    <title>⚸</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    if (!botao) {
-        console.error("Botão não encontrado ❌");
-        return;
-    }
+<body>
 
-    // Pré-carrega o áudio
-    const beijo = new Audio("Som_de_beijo_-_Blob_Sound__128k_.mp3");
-    beijo.preload = "auto";
+    <!-- ✅ FIX 1: tag de fechamento explícita -->
+    <button id="botao" title="Clique aqui"></button>
 
-    // ✅ Notificação Telegram
-    function notificarTelegram() {
-        const token = "8762429630:AAEgNlAZUPs9ZuCGUtC0m4uFI6H1M7FupSo";
-        const chatId = "8390291155";
-        const agora = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
-        const mensagem = `💘 Ela clicou! \n🕐 ${agora}`;
+    <div id="gatinho">
+        <img src="Aq.gif">
+    </div>
 
-        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: chatId, text: mensagem })
-        }).then(() => console.log("Telegram notificado ✅"))
-          .catch(err => console.error("Erro Telegram:", err));
-    }
+    <div id="final">
+        <img src="./snoopy.png">
+        <h1>Boa noite, gatinha! 💤</h1>
+        <p>
+            Lúcifer caiu do céu por arrogância.<br>
+            Você nem precisaria cair, o céu inteiro desceria pra te receber de joelhos. <br>
 
-    botao.addEventListener("click", () => {
-        console.log("Clicou no botão 🖱️");
+            :)
+        </p>
+    </div>
 
-        notificarTelegram();
+    <script src="script.js"></script>
+</body>
 
-        botao.style.display = "none";
-        gatinho.classList.add("mostrar");
-
-        // No ápice do GIF (~1500ms), toca só o 1º segundo do beijo
-        setTimeout(() => {
-            beijo.currentTime = 0;
-            beijo.play();
-
-            setTimeout(() => {
-                beijo.pause();
-                beijo.currentTime = 0;
-            }, 1000);
-        }, 1500);
-
-        // Começa animação de saída
-        setTimeout(() => {
-            gatinho.classList.add("zoomOut");
-        }, 2800);
-
-        // Mostra tela final
-        setTimeout(() => {
-            gatinho.style.display = "none";
-            final.classList.add("mostrar");
-        }, 4500);
-    });
-});
+</html>
