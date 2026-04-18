@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+    background: #0b0b0b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+}
+
+/* BOTÃO REDONDO */
+#botao {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: red;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#botao:hover {
+    transform: translate(-50%, -50%) scale(1.1); /* ✅ FIX 3: mantém o translate junto */
+    box-shadow: 0 0 25px red;
+}
+
+#botao:active {
+    transform: translate(-50%, -50%) scale(0.95); /* ✅ FIX 3: idem */
+}
+
+/* TELAS (começam escondidas) */
+#gatinho,
+#final {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* quando aparecer */
+#gatinho.mostrar {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+#final.mostrar {
+    opacity: 1;
+    transition: opacity 1s ease;
+    pointer-events: auto;
+}
+
+/* ✅ FIX 2: animação zoomOut definida */
+@keyframes zoomOut {
+    0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
+#gatinho.zoomOut {
+    animation: zoomOut 1.2s ease forwards;
+}
