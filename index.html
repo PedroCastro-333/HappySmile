@@ -1,33 +1,466 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <title>⚸</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>olá</title>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    body {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+    }
+
+    .scene {
+      max-width: 580px;
+      width: 90%;
+      padding: 3rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+
+    .typed-text {
+      font-size: 1.15rem;
+      line-height: 1.85;
+      color: #e8e8e8;
+      letter-spacing: 0.01em;
+      min-height: 4em;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: #e8e8e8;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.75s step-end infinite;
+    }
+
+    .cursor.hidden { display: none; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .ending {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .ending.visible { opacity: 1; }
+
+    .smiley { width: 54px; height: 54px; }
+
+    .boa-noite {
+      font-size: 1rem;
+      color: #888;
+      letter-spacing: 0.08em;
+      font-style: italic;
+    }
+
+    .saudade {
+      font-size: 0.8rem;
+      color: rgba(232, 232, 232, 0.2);
+      letter-spacing: 0.06em;
+      font-style: italic;
+    }
+
+    .start-btn, .feedback-btn {
+      background: none;
+      border: 0.5px solid #333;
+      color: #666;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      font-size: 0.85rem;
+      font-style: italic;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .start-btn:hover, .feedback-btn:hover { color: #aaa; border-color: #555; }
+
+    .feedback-btn {
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      color: #c8c8c8;
+      border-color: #555;
+    }
+
+    .feedback-btn:hover {
+      color: #fff;
+      border-color: #aaa;
+    }
+
+    /* overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .overlay.open { display: flex; }
+
+    /* dialog */
+    .dialog {
+      background: #0a0a0a;
+      border: 0.5px solid #2a2a2a;
+      padding: 2.5rem 2rem;
+      max-width: 420px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeUp 0.3s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .dialog-title {
+      font-size: 0.95rem;
+      color: #e8e8e8;
+      letter-spacing: 0.06em;
+    }
+
+    .dialog-sub {
+      font-size: 0.78rem;
+      color: #444;
+      letter-spacing: 0.04em;
+      font-style: italic;
+      margin-top: 0.4rem;
+    }
+
+    .dialog textarea {
+      background: #000;
+      border: 0.5px solid #222;
+      color: #c8c8c8;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      padding: 0.75rem 1rem;
+      resize: none;
+      width: 100%;
+      height: 110px;
+      outline: none;
+      letter-spacing: 0.02em;
+      transition: border-color 0.2s;
+    }
+
+    .dialog textarea:focus { border-color: #444; }
+    .dialog textarea::placeholder { color: #333; }
+
+    .dialog-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      background: none;
+      border: 0.5px solid #222;
+      color: #444;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-cancel:hover { color: #666; border-color: #333; }
+
+    .btn-send {
+      background: none;
+      border: 0.5px solid #444;
+      color: #aaa;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-send:hover { color: #e8e8e8; border-color: #666; }
+    .btn-send:disabled { opacity: 0.3; cursor: default; }
+
+    .dialog-status {
+      font-size: 0.75rem;
+      color: #3a3a3a;
+      font-style: italic;
+      letter-spacing: 0.04em;
+      min-height: 1em;
+    }
+
+    .dialog-status.ok { color: #4a7a4a; }
+    .dialog-status.err { color: #7a4a4a; }
+  </style>
+</head>
 <body>
 
-    <!-- ✅ FIX 1: tag de fechamento explícita -->
-    <button id="botao" title="Clique aqui"></button>
-
-    <div id="gatinho">
-        <img src="Aq.gif">
+  <!-- overlay + dialog -->
+  <div class="overlay" id="overlay">
+    <div class="dialog">
+      <p class="dialog-title">objetivo alcançado com sucesso.</p>
+      <p class="dialog-sub">fico feliz :)</p>
+      <textarea id="msgText" placeholder="deixa uma mensagem se quiser..."></textarea>
+      <div class="dialog-actions">
+        <button class="btn-cancel" id="btnCancel">fechar</button>
+        <button class="btn-send" id="btnSend">enviar</button>
+      </div>
+      <p class="dialog-status" id="dialogStatus"></p>
     </div>
+  </div>
 
-    <div id="final">
-        <img src="./snoopy.png">
-        <h1>Boa noite, gatinha! 💤</h1>
-        <p>
-            Lúcifer caiu do céu por arrogância.<br>
-            Você nem precisaria cair, o céu inteiro desceria pra te receber de joelhos. <br>
+  <div class="scene">
+    <button class="start-btn" id="startBtn">começar</button>
 
-            :)
-        </p>
+    <div id="main" style="display:none; flex-direction:column; gap:3rem; width:100%;">
+      <div>
+        <span class="typed-text" id="output"></span><span class="cursor" id="cursor"></span>
+      </div>
+
+      <div class="ending" id="ending">
+        <span class="saudade">Sinto sua falta.</span>
+        <svg class="smiley" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="19" cy="22" r="2" fill="#e8e8e8"/>
+          <circle cx="35" cy="22" r="2" fill="#e8e8e8"/>
+          <path d="M17 33 Q27 42 37 33" stroke="#e8e8e8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span class="boa-noite">boa noite. bjbj</span>
+        <span class="boa-noite">seu açaí te espera aqui</span>
+        <div style="display:flex; flex-direction:row; gap:0.75rem; align-items:center; margin-top:0.5rem;">
+          <button class="feedback-btn" id="feedbackBtn">se gostou e deu um sorriso, clica aqui :)</button>
+          <button class="feedback-btn" id="nopeBtn">se não gostou e quer me matar, clica aqui</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script>
+    const BOT_TOKEN = '8762429630:AAEgNlAZUPs9ZuCGUtC0m4uFI6H1M7FupSo';
+    const CHAT_ID   = '8390291155';
+
+    const msg = "Oi, Caroline. \nVocê achou que teria alguma gracinha super elaborada né?! Perdoar, me faltou criatividade. \nQuero que saiba que você é especial pra mim. \nGosto de você.\n\nAgora amassa os newba.";
+    const output     = document.getElementById('output');
+    const cursor     = document.getElementById('cursor');
+    const ending     = document.getElementById('ending');
+    const startBtn   = document.getElementById('startBtn');
+    const main       = document.getElementById('main');
+    const feedbackBtn= document.getElementById('feedbackBtn');
+    const overlay    = document.getElementById('overlay');
+    const btnCancel  = document.getElementById('btnCancel');
+    const btnSend    = document.getElementById('btnSend');
+    const msgText    = document.getElementById('msgText');
+    const dialogStatus = document.getElementById('dialogStatus');
+
+    let audioCtx = null;
+
+    function playKey() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      const clickLen = Math.floor(audioCtx.sampleRate * 0.012);
+      const clickBuf = audioCtx.createBuffer(1, clickLen, audioCtx.sampleRate);
+      const clickData = clickBuf.getChannelData(0);
+      for (let j = 0; j < clickLen; j++) {
+        const t = j / clickLen;
+        clickData[j] = (Math.random() * 2 - 1) * (1 - t) * (1 - t);
+      }
+      const clickSrc = audioCtx.createBufferSource();
+      clickSrc.buffer = clickBuf;
+      const clickFilter = audioCtx.createBiquadFilter();
+      clickFilter.type = 'highpass';
+      clickFilter.frequency.value = 2000 + Math.random() * 1000;
+      const clickGain = audioCtx.createGain();
+      clickGain.gain.setValueAtTime(0.55, now);
+      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
+      clickSrc.connect(clickFilter);
+      clickFilter.connect(clickGain);
+      clickGain.connect(audioCtx.destination);
+      clickSrc.start(now);
+
+      const bodyOsc = audioCtx.createOscillator();
+      bodyOsc.type = 'sine';
+      bodyOsc.frequency.setValueAtTime(180 + Math.random() * 60, now);
+      bodyOsc.frequency.exponentialRampToValueAtTime(80, now + 0.04);
+      const bodyGain = audioCtx.createGain();
+      bodyGain.gain.setValueAtTime(0.12, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+      bodyOsc.connect(bodyGain);
+      bodyGain.connect(audioCtx.destination);
+      bodyOsc.start(now);
+      bodyOsc.stop(now + 0.05);
+
+      const relDelay = 0.04 + Math.random() * 0.02;
+      const relLen = Math.floor(audioCtx.sampleRate * 0.008);
+      const relBuf = audioCtx.createBuffer(1, relLen, audioCtx.sampleRate);
+      const relData = relBuf.getChannelData(0);
+      for (let j = 0; j < relLen; j++) {
+        relData[j] = (Math.random() * 2 - 1) * (1 - j / relLen);
+      }
+      const relSrc = audioCtx.createBufferSource();
+      relSrc.buffer = relBuf;
+      const relFilter = audioCtx.createBiquadFilter();
+      relFilter.type = 'highpass';
+      relFilter.frequency.value = 3000;
+      const relGain = audioCtx.createGain();
+      relGain.gain.setValueAtTime(0.18, now + relDelay);
+      relGain.gain.exponentialRampToValueAtTime(0.001, now + relDelay + 0.008);
+      relSrc.connect(relFilter);
+      relFilter.connect(relGain);
+      relGain.connect(audioCtx.destination);
+      relSrc.start(now + relDelay);
+    }
+
+    let i = 0;
+    function type() {
+      if (i < msg.length) {
+        const ch = msg[i];
+        if (ch === '\n') {
+          output.appendChild(document.createElement('br'));
+        } else {
+          output.appendChild(document.createTextNode(ch));
+          if (ch !== ' ') playKey();
+        }
+        i++;
+        const prev = msg[i - 1];
+        const delay = prev === '.' ? 420 : prev === '?' ? 320 : prev === ',' ? 180 : Math.random() * 55 + 35;
+        setTimeout(type, delay);
+      } else {
+        cursor.classList.add('hidden');
+        setTimeout(() => ending.classList.add('visible'), 800);
+      }
+    }
+
+    startBtn.addEventListener('click', () => {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      startBtn.style.display = 'none';
+      main.style.display = 'flex';
+      setTimeout(type, 600);
+    });
+
+    async function sendTelegram(text) {
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+      const body = {
+        chat_id: CHAT_ID,
+        text: text,
+        parse_mode: 'Markdown'
+      };
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      return res.ok;
+    }
+
+    const nopeBtn = document.getElementById('nopeBtn');
+    let nopeCount = 0;
+
+    function moveNope(e) {
+      const btn = nopeBtn;
+      if (btn.style.position !== 'fixed') {
+        const rect = btn.getBoundingClientRect();
+        btn.style.position = 'fixed';
+        btn.style.left = rect.left + 'px';
+        btn.style.top  = rect.top  + 'px';
+        btn.style.margin = '0';
+        // força reflow antes de mover
+        btn.getBoundingClientRect();
+      }
+      const margin = 20;
+      const bw = btn.offsetWidth;
+      const bh = btn.offsetHeight;
+      const maxX = window.innerWidth  - bw - margin;
+      const maxY = window.innerHeight - bh - margin;
+      const x = Math.random() * (maxX - margin) + margin;
+      const y = Math.random() * (maxY - margin) + margin;
+      btn.style.left = x + 'px';
+      btn.style.top  = y + 'px';
+      nopeCount++;
+      if (nopeCount === 3) {
+        btn.textContent = 'não vai conseguir não...';
+      } else if (nopeCount === 6) {
+        btn.textContent = 'desiste :)';
+      } else if (nopeCount >= 9) {
+        btn.style.opacity = '0.15';
+      }
+    }
+
+    function activateNope() {
+      nopeBtn.addEventListener('mouseover', moveNope);
+      nopeBtn.addEventListener('touchstart', moveNope);
+    }
+
+    // só ativa a fuga depois que o ending aparecer
+    setTimeout(activateNope, 2000);
+
+    feedbackBtn.addEventListener('click', async () => {
+      overlay.classList.add('open');
+      msgText.focus();
+      // notifica automaticamente que ela abriu
+      await sendTelegram('🙂 *Caroline abriu o feedback!* Ela deu um sorrisinho.');
+    });
+
+    btnCancel.addEventListener('click', () => {
+      overlay.classList.remove('open');
+      msgText.value = '';
+      dialogStatus.textContent = '';
+      dialogStatus.className = 'dialog-status';
+    });
+
+    btnSend.addEventListener('click', async () => {
+      const texto = msgText.value.trim();
+      btnSend.disabled = true;
+      dialogStatus.textContent = 'enviando...';
+      dialogStatus.className = 'dialog-status';
+
+      const notif = texto
+        ? `💬 *Mensagem da Caroline:*\n"${texto}"`
+        : '🙂 Caroline clicou no sorrisinho mas não deixou mensagem.';
+
+      const ok = await sendTelegram(notif);
+
+      if (ok) {
+        dialogStatus.textContent = 'mensagem enviada.';
+        dialogStatus.className = 'dialog-status ok';
+        msgText.value = '';
+        setTimeout(() => {
+          overlay.classList.remove('open');
+          dialogStatus.textContent = '';
+          dialogStatus.className = 'dialog-status';
+          btnSend.disabled = false;
+        }, 1800);
+      } else {
+        dialogStatus.textContent = 'erro ao enviar. tenta de novo.';
+        dialogStatus.className = 'dialog-status err';
+        btnSend.disabled = false;
+      }
+    });
+  </script>
 </body>
-
 </html>
